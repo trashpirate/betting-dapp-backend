@@ -1,7 +1,5 @@
 {
     "version": 2,
-    "framework": "nestjs",
-    "outputDirectory": "dist",
     "builds": [
         {
             "src": "src/main.ts",
