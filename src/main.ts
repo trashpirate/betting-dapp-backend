@@ -7,8 +7,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({transform: true}));
   
-  
-  // app.enableCors();
+
+  app.enableCors();
   const config = new DocumentBuilder()
     .setTitle('PetLFG Betting DAPP')
     .setDescription('API for PetLFG Betting DApp')
