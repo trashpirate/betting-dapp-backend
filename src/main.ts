@@ -9,7 +9,7 @@ async function bootstrap() {
   
 
   app.enableCors({
-      origin: 'https://betting-dapp-frontend.vercel.app',
+      origin: process.env.CLIENT_URL || 'http://localhost:3000',
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     });
@@ -23,6 +23,5 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT || 3001);
-  // await app.listen(3001);
 }
 bootstrap();
