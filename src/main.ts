@@ -8,7 +8,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({transform: true}));
   
 
-  app.enableCors();
+  app.enableCors({
+      origin: 'https://betting-dapp-frontend.vercel.app',
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      credentials: true,
+    });
   const config = new DocumentBuilder()
     .setTitle('PetLFG Betting DAPP')
     .setDescription('API for PetLFG Betting DApp')
