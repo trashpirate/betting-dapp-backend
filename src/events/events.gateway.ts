@@ -41,7 +41,7 @@ export class EventsGateway {
   ): Promise<Observable<WsResponse<any>>> {
     const tokenPrice = await this.appService.getTokenPrice();
     const round = this.appService.setCurrentResult(tokenPrice);
-    const sharedInterval$ = interval(60000).pipe(
+    const sharedInterval$ = interval(600000).pipe(
       map((item) => ({ event: 'events', data: round })),
       share(),
     );
