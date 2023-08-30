@@ -8,6 +8,7 @@ export class RoundDTO {
     @Type(() => Date)
     @IsDate()
     end: Date | null = null;
+    @ApiProperty({default: "0", required: false})
     initialPrice: number | null = null;
     currentPrice: number | null = null;
     status: boolean = false;

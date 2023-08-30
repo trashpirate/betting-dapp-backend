@@ -27,6 +27,11 @@ export class AppController {
     return this.appService.setRound(newRound);
   }
 
+  // @Post('set-initial-price')
+  // setInitialPrice(@Body() initialPrice: number): Promise<any> {
+  //   return this.appService.setInitialPrice(initialPrice);
+  // }
+
   @Post('end-round')
   stopCurrentRound(): any {
     return this.appService.stopCurrentRound();

@@ -34,7 +34,9 @@ export class AppService {
   async setRound(round: RoundDTO): Promise<any> {
     try {
       const tokenPrice = await this.getTokenPrice();
-      round.initialPrice = tokenPrice;
+      if (round.initialPrice == 0){
+          round.initialPrice = tokenPrice;
+      }
       round.currentPrice = tokenPrice;
       round.start = new Date(Date.now());
       round.status = true;
