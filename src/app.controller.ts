@@ -7,6 +7,11 @@ import {RoundDTO} from './dtos/round.dt';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Get()
+  test(): string {
+    return this.appService.test();
+  }
+
   @Get('token-info')
   async getTokenInfo() : Promise<TokenPriceDTO> {
     return this.appService.getTokenInfo();
