@@ -11,5 +11,7 @@ export class RoundDTO {
     @ApiProperty({default: "0", required: false})
     initialPrice: number | null = null;
     currentPrice: number | null = null;
+    @ApiProperty({default: 600000, required: false})
+    interval: number | null = 600000;
     status: boolean = false;
 }

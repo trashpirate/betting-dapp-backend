@@ -15,6 +15,10 @@ export class AppService {
   private bettingStartSubject = new Subject<boolean>();
   private bettingEndSubject = new Subject<boolean>();
 
+  test(): string {
+    return 'API running';
+  }
+
   triggerBettingStart(data: boolean) {
     this.bettingStartSubject.next(data);
   }

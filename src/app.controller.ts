@@ -7,6 +7,11 @@ import {RoundDTO} from './dtos/round.dt';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @Get()
+  test(): string {
+    return this.appService.test();
+  }
+
   @Get('token-info')
   async getTokenInfo() : Promise<TokenPriceDTO> {
     return this.appService.getTokenInfo();
@@ -26,11 +31,6 @@ export class AppController {
   setRound(@Body() newRound: RoundDTO): Promise<any> {
     return this.appService.setRound(newRound);
   }
-
-  // @Post('set-initial-price')
-  // setInitialPrice(@Body() initialPrice: number): Promise<any> {
-  //   return this.appService.setInitialPrice(initialPrice);
-  // }
 
   @Post('end-round')
   stopCurrentRound(): any {

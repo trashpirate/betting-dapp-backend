@@ -9,7 +9,7 @@ async function bootstrap() {
   
 
   app.enableCors({
-      origin: process.env.CLIENT_URL || 'http://localhost:3000',
+      origin: [process.env.CLIENT_URL || 'http://localhost:3000', 'https://play.petlfg.com'],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     });
