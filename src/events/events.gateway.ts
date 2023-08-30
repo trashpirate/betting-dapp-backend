@@ -42,7 +42,7 @@ export class EventsGateway {
   ): Promise<Observable<WsResponse<any>>> {
     const tokenPrice = await this.appService.getTokenPrice();
     const round = this.appService.setCurrentResult(tokenPrice);
-    const sharedInterval$ = interval(Number(process.env.CMC_INTERVALL)).pipe(
+    const sharedInterval$ = interval(round.interval).pipe(
       map((item) => ({ event: 'events', data: round })),
       share(),
     );
