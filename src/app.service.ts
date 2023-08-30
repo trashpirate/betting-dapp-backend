@@ -77,7 +77,6 @@ export class AppService {
 
   stopCurrentRound() {
     this.currentRound.status = false;
-    this.currentRound.initialPrice = null;
     this.triggerBettingEnd(true);
     try {
       const job = this.schedulerRegistry.getCronJob('endRound');
