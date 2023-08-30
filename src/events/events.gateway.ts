@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import {
   MessageBody,
   SubscribeMessage,
@@ -5,14 +6,14 @@ import {
   WebSocketServer,
   WsResponse,
 } from '@nestjs/websockets';
-import { from, interval, Observable } from 'rxjs';
+import { interval, Observable } from 'rxjs';
 import { map, share } from 'rxjs/operators';
 import { Server } from 'socket.io';
 import { AppService } from '../app.service';
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: [process.env.CLIENT_URL || 'http://localhost:3000', 'https://play.petlfg.com'],
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -41,7 +42,7 @@ export class EventsGateway {
   ): Promise<Observable<WsResponse<any>>> {
     const tokenPrice = await this.appService.getTokenPrice();
     const round = this.appService.setCurrentResult(tokenPrice);
-    const sharedInterval$ = interval(600000).pipe(
+    const sharedInterval$ = interval(Number(process.env.CMC_INTERVALL)).pipe(
       map((item) => ({ event: 'events', data: round })),
       share(),
     );
