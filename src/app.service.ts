@@ -14,6 +14,7 @@ export class AppService {
 
   private bettingStartSubject = new Subject<boolean>();
   private bettingEndSubject = new Subject<boolean>();
+  private roundEndSubject = new Subject<boolean>();
 
   test(): string {
     return 'API running';
@@ -26,6 +27,10 @@ export class AppService {
   triggerBettingEnd(data: boolean) {
     this.bettingEndSubject.next(data);
   }
+  
+  triggerRoundEnd(data: boolean) {
+    this.roundEndSubject.next(data);
+  }
 
   onBettingStart(): Observable<boolean> {
     return this.bettingStartSubject.asObservable();
@@ -34,25 +39,44 @@ export class AppService {
   onBettingEnd(): Observable<boolean> {
     return this.bettingEndSubject.asObservable();
   }
+
+  onRoundEnd(): Observable<boolean> {
+    return this.roundEndSubject.asObservable();
+  }
   
   async setRound(round: RoundDTO): Promise<any> {
     try {
+      const assert = require('assert');
+      assert(round.close < round.end, "Round must close before round end.");
+      round.start = new Date(Date.now());
+      
       const tokenPrice = await this.getTokenPrice();
       if (round.initialPrice == 0){
           round.initialPrice = tokenPrice;
       }
-      round.currentPrice = tokenPrice;
-      round.start = new Date(Date.now());
-      round.status = true;
-      this.currentRound = round;
       
-      if (round.restart){
-        this.registerEndTime(round.end);
+      round.currentPrice = tokenPrice;
+       
+
+      this.deleteCurrentCronJobs();
+      if (round.start < round.close){
+        round.open = true;
+        this.registerCloseTime(round.close);
         this.triggerBettingStart(round.status);
       }
       else{
-        this.registerEndTime(new Date(Date.now()+1000));
+        round.open = false;
       }
+
+      if (round.start < round.end){
+        round.status = true;
+        this.registerEndTime(round.end);
+      }
+      else{
+        round.status = false;
+      }
+
+      this.currentRound = round;
         
       return tokenPrice == null
         ? { success: false }
@@ -62,33 +86,53 @@ export class AppService {
     }
   }
 
+  deleteCurrentCronJobs(){
+
+    const jobs = this.schedulerRegistry.getCronJobs();
+    if (jobs.size > 0) {
+      jobs.forEach((value, key, map) => {
+        this.schedulerRegistry.deleteCronJob(key);
+      });
+    }
+    
+  }
+
   registerEndTime(stopTime: Date) {
     let jobEnd: CronJob = new CronJob(stopTime, () => {
       this.currentRound.status = false;
+      this.currentRound.endPrice = this.currentRound.currentPrice;
+      this.currentRound.interval = 86400000;
+      this.triggerRoundEnd(true);
       console.log('Ended current round!');
     });
-    const jobs = this.schedulerRegistry.getCronJobs();
-    if (jobs.size > 0) {
-      this.schedulerRegistry.deleteCronJob('endRound');
-    }
-
     this.schedulerRegistry.addCronJob('endRound', jobEnd);
     jobEnd.start();   
 
   }
 
+  registerCloseTime(closeTime: Date) {
+    let jobEnd: CronJob = new CronJob(closeTime, () => {
+      this.currentRound.open = false;
+      this.triggerBettingEnd(true);
+      console.log('Closed current round!');
+    });
+    this.schedulerRegistry.addCronJob('closeRound', jobEnd);
+    jobEnd.start();   
+  }
+
   getCurrentRound(): RoundDTO {
-    // console.log(this.currentRound);
     return this.currentRound;
   }
 
   stopCurrentRound() {
     this.currentRound.status = false;
+    this.currentRound.open = false;
+    this.currentRound.interval = 86400000;
+    this.triggerRoundEnd(true);
     this.triggerBettingEnd(true);
     try {
-      const job = this.schedulerRegistry.getCronJob('endRound');
-      job.stop();
-      return { success: true, job: job.running };
+      this.deleteCurrentCronJobs();
+      return { success: true };
     } catch (e) {
       return { success: false, error: (e as Error).message };
     }
@@ -113,6 +157,11 @@ export class AppService {
 
   setCurrentResult(tokenPrice: number): RoundDTO {
     this.currentRound.currentPrice = tokenPrice;
+    return this.currentRound;
+  }
+
+  setEndResult(tokenPrice: number): RoundDTO {
+    this.currentRound.endPrice = tokenPrice;
     return this.currentRound;
   }
 
@@ -153,7 +202,7 @@ export class AppService {
         'https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest',
         {
           headers: {
-            'X-CMC_PRO_API_KEY': 'c72fc6fd-dae6-4a41-8cfa-c0d9068b158b', // Replace with your CoinMarketCap API key
+            'X-CMC_PRO_API_KEY': process.env.COINMARKETCAP_API_KEY, // Replace with your CoinMarketCap API key
             ['Content-Type']: 'application/json',
           },
           params: {

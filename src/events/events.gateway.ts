@@ -34,6 +34,11 @@ export class EventsGateway {
       // Emit a WebSocket event to clients
       this.server.emit('bettingEnded', data);
     });
+    
+    this.appService.onRoundEnd().subscribe((data) => {
+      // Emit a WebSocket event to clients
+      this.server.emit('roundEnded', data);
+    });
   }
 
   @SubscribeMessage('events')
