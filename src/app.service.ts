@@ -45,8 +45,15 @@ export class AppService {
       round.start = new Date(Date.now());
       round.status = true;
       this.currentRound = round;
-      this.registerEndTime(round.end);
-      this.triggerBettingStart(round.status);
+      
+      if (round.restart){
+        this.registerEndTime(round.end);
+        this.triggerBettingStart(round.status);
+      }
+      else{
+        this.registerEndTime(new Date(Date.now()+1000));
+      }
+        
       return tokenPrice == null
         ? { success: false }
         : { success: true, round: this.currentRound };
