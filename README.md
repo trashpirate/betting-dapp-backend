@@ -2,6 +2,7 @@
 ![Version](https://img.shields.io/badge/version-1.1.0-blue.svg?cacheSeconds=2592000)
 ![Static Badge](https://img.shields.io/badge/node-v9.8.1-blue)
 ![Static Badge](https://img.shields.io/badge/npm-v18.17.0-blue)
+![Static Badge](https://img.shields.io/badge/Nest-v10.1.11-blue)
 [![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)](https://github.com/trashpirate/betting-dapp-backend#readme)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/trashpirate/betting-dapp-backend/graphs/commit-activity)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/trashpirate/betting-dapp-backend/blob/master/LICENSE)
